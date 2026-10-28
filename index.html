@@ -328,9 +328,46 @@ console.log("Пользователь:", tg.initDataUnsafe?.user);
 
   document.body.style.backgroundColor = "#0b0b0f";
 
-  function createRoom() {
-  showNotice("Создание комнаты подключим к боту следующим шагом!");
+  function 
+async function createRoom() {
+  const tg = window.Telegram?.WebApp;
+
+  if (!tg || !tg.initData) {
+    showNotice("Открой игру через Telegram, чтобы создать комнату.");
+    return;
+  }
+
+  showNotice("Создаём комнату...");
+
+  try {
+    const response = await fetch("https://ТВОЙ-СЕРВЕР/api/rooms", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        initData: tg.initData
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.detail || "Не удалось создать комнату");
+    }
+
+    if (data.already_in_room) {
+      showNotice(`Ты уже в комнате ${data.code}`);
+      return;
+    }
+
+    showNotice(`Комната создана! Код: ${data.code}`);
+  } catch (error) {
+    console.error(error);
+    showNotice("Не удалось подключиться к серверу. Попробуй позже.");
+  }
 }
+
 </script>
 </body>
 </html>
