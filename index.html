@@ -4,6 +4,109 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <meta charset="UTF-8">
     <title>Title</title>
+    
+<style>
+  .game-modal[aria-hidden="true"] {
+    display: none;
+  }
+
+  .game-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .game-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(5px);
+  }
+
+  .game-modal__box {
+    position: relative;
+    width: 100%;
+    max-width: 340px;
+    box-sizing: border-box;
+    padding: 28px 22px 22px;
+    text-align: center;
+    color: #f7f2e9;
+    background: #17151b;
+    border: 1px solid #6d3038;
+    border-radius: 20px;
+    box-shadow: 0 20px 70px rgba(0, 0, 0, 0.6);
+    animation: mafiaModalIn 0.22s ease-out;
+  }
+
+  .game-modal__symbol {
+    font-size: 34px;
+    color: #d7a65b;
+    margin-bottom: 10px;
+  }
+
+  .game-modal__box h2 {
+    margin: 0 0 12px;
+    font-size: 22px;
+  }
+
+  .game-modal__box p {
+    margin: 0 0 18px;
+    line-height: 1.5;
+    color: #d0c9d0;
+    overflow-wrap: anywhere;
+  }
+
+  .game-modal__code {
+    margin: 16px 0;
+    padding: 14px;
+    border: 1px dashed #d7a65b;
+    border-radius: 12px;
+    color: #f4cb7b;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 5px;
+  }
+
+  .game-modal__actions {
+    display: grid;
+    gap: 10px;
+  }
+
+  .game-modal__actions button {
+    width: 100%;
+    padding: 13px 16px;
+    border: 0;
+    border-radius: 11px;
+    background: #8d303b;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .game-modal__actions button:first-child {
+    background: #302833;
+    border: 1px solid #70505b;
+  }
+
+  @keyframes mafiaModalIn {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+</style>
+</head>
+
 </head>
 <body>
 
@@ -307,17 +410,77 @@
 
     <div id="notice" class="notice" role="status" aria-live="polite"></div>
 
+<div id="game-modal" class="game-modal" aria-hidden="true">
+  <div class="game-modal__backdrop" onclick="closeGameModal()"></div>
+
+  <div class="game-modal__box" role="dialog" aria-modal="true" aria-labelledby="game-modal-title">
+    <div class="game-modal__symbol">♠</div>
+    <h2 id="game-modal-title">Сообщение</h2>
+    <p id="game-modal-message"></p>
+
+    <div id="game-modal-code" class="game-modal__code" hidden></div>
+
+    <div class="game-modal__actions">
+      <button id="game-modal-copy" type="button" onclick="copyRoomCode()" hidden>
+        Скопировать код
+      </button>
+      <button type="button" onclick="closeGameModal()">Понятно</button>
+    </div>
+  </div>
+</div>
+
     <footer class="footer">
       TRUST NO ONE · 2026
     </footer>
   </main>
 
   <script>
-    function showNotice(message) {
-      const notice = document.getElementById("notice");
-      notice.textContent = message;
-      notice.classList.add("show");
-    }
+    
+function showNotice(message) {
+  const modal = document.getElementById("game-modal");
+  const title = document.getElementById("game-modal-title");
+  const text = document.getElementById("game-modal-message");
+  const codeBox = document.getElementById("game-modal-code");
+  const copyButton = document.getElementById("game-modal-copy");
+
+  const match = message.match(/Код:\s*([A-Z0-9]+)/i);
+
+  title.textContent = match ? "Комната создана!" : "Сообщение";
+  text.textContent = match
+    ? "Приглашай друзей! Передай им код комнаты:"
+    : message;
+
+  codeBox.hidden = !match;
+  copyButton.hidden = !match;
+
+  if (match) {
+    codeBox.textContent = match[1];
+    copyButton.dataset.code = match[1];
+  } else {
+    codeBox.textContent = "";
+    copyButton.dataset.code = "";
+  }
+
+  modal.setAttribute("aria-hidden", "false");
+}
+
+function closeGameModal() {
+  document.getElementById("game-modal").setAttribute("aria-hidden", "true");
+}
+
+async function copyRoomCode() {
+  const button = document.getElementById("game-modal-copy");
+  const code = button.dataset.code;
+
+  if (!code) return;
+
+  try {
+    await navigator.clipboard.writeText(code);
+    button.textContent = "Код скопирован!";
+  } catch (error) {
+    button.textContent = "Код: " + code;
+  }
+}
 
 
   const tg = window.Telegram.WebApp;
