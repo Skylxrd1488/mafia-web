@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a090b">
+  <title>MAFIA — Ночь начинается</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0a090b;
+      --panel: #151216;
+      --red: #d62839;
+      --red-dark: #741621;
+      --text: #f5eeee;
+      --muted: #94868b;
+      --border: #302127;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at 50% 0%, #421019 0%, transparent 45%),
+        var(--bg);
+      font-family: Arial, sans-serif;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .app {
+      width: min(100%, 440px);
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 26px 20px 35px;
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 3px;
+    }
+
+    .online {
+      color: #e45b68;
+      letter-spacing: 1px;
+    }
+
+    .hero {
+      position: relative;
+      padding: 55px 0 38px;
+      text-align: center;
+    }
+
+    .moon {
+      display: grid;
+      place-items: center;
+      width: 94px;
+      height: 94px;
+      margin: 0 auto 23px;
+      border: 1px solid #70232e;
+      border-radius: 50%;
+      background: radial-gradient(circle, #4b111c, #180c11 70%);
+      box-shadow: 0 0 55px #a9192930;
+      font-size: 43px;
+      animation: glow 3s ease-in-out infinite;
+    }
+
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 25px #a9192920; }
+      50% { box-shadow: 0 0 55px #a9192950; }
+    }
+
+    .eyebrow {
+      color: var(--red);
+      font-size: 10px;
+      font-weight: bold;
+      letter-spacing: 5px;
+    }
+
+    h1 {
+      margin: 12px 0;
+      font-family: Georgia, serif;
+      font-size: clamp(48px, 14vw, 66px);
+      font-weight: normal;
+      letter-spacing: 5px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .divider {
+      height: 1px;
+      margin: 8px 0 25px;
+      background: linear-gradient(90deg, transparent, #71303a, transparent);
+    }
+
+    .section-title {
+      margin-bottom: 13px;
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--muted);
+    }
+
+    .card {
+      position: relative;
+      margin-bottom: 12px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: linear-gradient(135deg, #1b151a, #100e11);
+      transition: transform .2s, border-color .2s;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: #79303c;
+    }
+
+    .card-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .symbol {
+      display: grid;
+      flex: 0 0 48px;
+      height: 48px;
+      place-items: center;
+      border: 1px solid #48202a;
+      border-radius: 10px;
+      background: #241117;
+      font-size: 23px;
+    }
+
+    .card h2 {
+      margin: 0 0 6px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .arrow {
+      margin-left: auto;
+      color: var(--red);
+      font-size: 22px;
+    }
+
+    .primary {
+      width: 100%;
+      margin-top: 10px;
+      padding: 17px;
+      border: 1px solid #e23b4d;
+      border-radius: 9px;
+      color: white;
+      background: linear-gradient(100deg, #841a28, #d1263a);
+      font-weight: bold;
+      letter-spacing: 2px;
+      box-shadow: 0 8px 28px #bd1e3024;
+      transition: transform .2s, filter .2s;
+    }
+
+    .primary:hover {
+      filter: brightness(1.15);
+      transform: translateY(-2px);
+    }
+
+    .secondary {
+      width: 100%;
+      margin-top: 10px;
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      background: #151116;
+    }
+
+    .footer {
+      margin-top: 32px;
+      text-align: center;
+      color: #67585e;
+      font-size: 10px;
+      letter-spacing: 3px;
+    }
+
+    .notice {
+      display: none;
+      margin-top: 16px;
+      padding: 14px;
+      border: 1px solid #61232e;
+      border-radius: 9px;
+      color: #f4c8cd;
+      background: #251016;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .notice.show {
+      display: block;
+      animation: appear .25s ease-out;
+    }
+
+    @keyframes appear {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <header class="topbar">
+      <span>NOIR STUDIOS</span>
+      <span class="online">● NIGHT MODE</span>
+    </header>
+
+    <section class="hero">
+      <div class="moon">🌑</div>
+      <div class="eyebrow">ГОРОД НЕ СПИТ</div>
+      <h1>MAFIA</h1>
+      <p class="subtitle">
+        У каждого есть секрет.<br>
+        Доверяй инстинктам. Не доверяй никому.
+      </p>
+    </section>
+
+    <div class="divider"></div>
+
+    <div class="section-title">ТВОЯ ИСТОРИЯ НАЧИНАЕТСЯ</div>
+    <section class="card" onclick="createRoom()">
+   <div class="card-row">
+    <div class="symbol">♠</div>
+    <div>
+      <h2>Создать комнату</h2>
+      <p>Собери игроков и начни свою игру</p>
+    </div>
+    <span class="arrow">›</span>
+  </div>
+    </section>
+    <section class="card">
+      <div class="card-row">
+        <div class="symbol">♟</div>
+        <div>
+          <h2>Присоединиться</h2>
+          <p>Войди в игру по секретному коду</p>
+        </div>
+        <span class="arrow">›</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-row">
+        <div class="symbol">☠</div>
+        <div>
+          <h2>Мой профиль</h2>
+          <p>Статистика, победы и поражения</p>
+        </div>
+        <span class="arrow">›</span>
+      </div>
+    </section>
+
+    <button class="primary" onclick="showNotice('Создание комнаты подключим к твоему боту на следующем этапе.')">
+      НАЧАТЬ ИГРУ
+    </button>
+
+    <button class="secondary" onclick="showNotice('Здесь появится список игроков и текущий статус комнаты.')">
+      МОЯ ИГРА
+    </button>
+
+    <div id="notice" class="notice" role="status" aria-live="polite"></div>
+
+    <footer class="footer">
+      TRUST NO ONE · 2026
+    </footer>
+  </main>
+
+  <script>
+    function showNotice(message) {
+      const notice = document.getElementById("notice");
+      notice.textContent = message;
+      notice.classList.add("show");
+    }
+
+    
+  const tg = window.Telegram.WebApp;
+
+  tg.ready();
+  tg.expand();
+
+  document.body.style.backgroundColor = "#0b0b0f";
+
+  function createRoom() {
+    alert("Кнопка работает!");
+  }
+</script>
+</body>
+</html>
+
