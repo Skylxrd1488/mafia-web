@@ -321,7 +321,8 @@
 
 
   const tg = window.Telegram.WebApp;
-
+console.log("Telegram WebApp:", tg);
+console.log("Пользователь:", tg.initDataUnsafe?.user);
   tg.ready();
   tg.expand();
 
